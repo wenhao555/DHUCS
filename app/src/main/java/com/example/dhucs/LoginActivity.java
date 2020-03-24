@@ -1,5 +1,6 @@
 package com.example.dhucs;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -66,17 +67,17 @@ public class LoginActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-//                String userName = account.getText().toString();
-//                String pwd = password.getText().toString();
-//                if (userName.equals("") || pwd.equals(""))
-//                {
-//                    Toast.makeText(LoginActivity.this, "请输入用户名和密码", Toast.LENGTH_SHORT).show();
-//                } else
-//                {
-//                    requestData(userName, pwd);
-//                }
-                PrefUtils.setBoolean(context, "isAdmin", false);
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                String userName = account.getText().toString();
+                String pwd = password.getText().toString();
+                if (userName.equals("") || pwd.equals(""))
+                {
+                    Toast.makeText(LoginActivity.this, "请输入用户名和密码", Toast.LENGTH_SHORT).show();
+                } else
+                {
+                    requestData(userName, pwd);
+                }
+//                PrefUtils.setBoolean(context, "isAdmin", false);
+//                startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
         });
     }
@@ -84,6 +85,14 @@ public class LoginActivity extends AppCompatActivity
 
     private void requestData(String userName, String pwd)
     {
+        String url = "";
+        if (userName.equals("admin"))
+        {
+            url = Urls.adminLogin;
+        } else
+        {
+            url = Urls.login;
+        }
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -91,11 +100,18 @@ public class LoginActivity extends AppCompatActivity
         final User user = new User();
         user.setAccount(userName);
         user.setPassword(pwd);
+        if (userName.equals("admin"))
+        {
+            user.setAdmin(true);
+        } else
+        {
+            user.setAdmin(false);
+        }
         Gson gson = new Gson();
         String Json = gson.toJson(user);
         final RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
         final Request request = new Request.Builder()
-                .url(Urls.login)
+                .url(url)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -119,41 +135,60 @@ public class LoginActivity extends AppCompatActivity
         });
     }
 
-    private Handler mHandler = new Handler()
+    private Handler mHandler = new Handler(new Handler.Callback()
     {
         @Override
-        public void handleMessage(Message msg)
+        public boolean handleMessage(@NonNull Message msg)
         {
-            super.handleMessage(msg);
             if (msg.what == 1)
             {
-                String string = msg.obj.toString();
-                if (string.equals(""))
+
+
+                if (account.getText().toString().equals("admin"))
                 {
-                    return;
-                } else
-                {
-                    JsonObject jsonObject = new JsonParser().parse(string).getAsJsonObject();
-                    Gson gson = new Gson();
-                    User user1 = gson.fromJson(jsonObject, User.class);
-                    Log.e("asd", string + "");
-                    if (!user1.getAccount().equals(""))
+                    if (!Boolean.parseBoolean(msg.obj.toString()))
                     {
-                        PrefUtils.setString(context, "name", user1.getName());
-                        PrefUtils.setString(context, "password", user1.getPassword());
-                        PrefUtils.setString(context, "sex", user1.getSex());
-                        PrefUtils.setString(context, "birth", user1.getBirth());
-                        PrefUtils.setString(context, "account", user1.getAccount());
-                        PrefUtils.setString(context, "imgpath", user1.getImage());
-                        PrefUtils.setBoolean(context, "isAdmin", user1.getAdmin());
-                        startActivity(new Intent(context, MainActivity.class));
-                        finish();
+                        Toast.makeText(LoginActivity.this, "登陆失败", Toast.LENGTH_SHORT).show();
                     } else
                     {
-                        Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+                        PrefUtils.setBoolean(context, "isAdmin", true);
+                        startActivity(new Intent(context, MainActivity.class));
+                        finish();
                     }
+                } else
+                {
+                    String string = msg.obj.toString();
+                    if (string.equals(""))
+                    {
+                        return false;
+                    } else
+                    {
+                        JsonObject jsonObject = new JsonParser().parse(string).getAsJsonObject();
+                        Gson gson = new Gson();
+                        User user1 = gson.fromJson(jsonObject, User.class);
+                        Log.e("asd", string + "");
+                        if (!user1.getAccount().equals(""))
+                        {
+                            PrefUtils.setString(context, "name", user1.getName());
+                            PrefUtils.setString(context, "password", user1.getPassword());
+                            PrefUtils.setString(context, "sex", user1.getSex());
+                            PrefUtils.setString(context, "birth", user1.getBirth());
+                            PrefUtils.setString(context, "account", user1.getAccount());
+                            PrefUtils.setString(context, "imgpath", user1.getImage());
+                            PrefUtils.setBoolean(context, "isAdmin", false);
+                            startActivity(new Intent(context, MainActivity.class));
+                            finish();
+                        } else
+                        {
+                            Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
                 }
             }
+            return true;
         }
-    };
+    });
+
 }

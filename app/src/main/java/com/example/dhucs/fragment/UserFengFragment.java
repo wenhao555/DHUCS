@@ -27,6 +27,7 @@ public class UserFengFragment extends Fragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_feng, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_feng, container, false);
+        return view;
     }
 }

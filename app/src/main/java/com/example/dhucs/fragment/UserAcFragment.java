@@ -27,6 +27,8 @@ public class UserAcFragment extends Fragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_ac, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_ac, container, false);
+        return view;
+
     }
 }

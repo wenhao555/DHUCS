@@ -56,6 +56,7 @@ public class RegistActivity extends AppCompatActivity
         name = findViewById(R.id.name);
         user_bth = findViewById(R.id.user_bth);
         user_group = findViewById(R.id.user_group);
+
         user_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
@@ -117,6 +118,8 @@ public class RegistActivity extends AppCompatActivity
                 user.setName(names);
                 user.setSex(isMan);
                 user.setBirth(bth);
+                user.setImage(" ");
+                user.setAdmin(false);
                 Gson gson = new Gson();
                 String Json = gson.toJson(user);
                 RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);

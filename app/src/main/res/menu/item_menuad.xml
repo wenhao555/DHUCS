@@ -3,11 +3,11 @@
 
     <item
         android:id="@+id/home"
-        android:icon="@mipmap/news"
+        android:icon="@mipmap/activity"
         android:title="@string/home" />
     <item
         android:id="@+id/mien"
-        android:icon="@mipmap/mine"
+        android:icon="@mipmap/news"
         android:title="@string/mien" />
     <item
         android:id="@+id/mine"

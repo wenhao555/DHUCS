@@ -1,12 +1,7 @@
-package com.example.dhucs.fragment;
-
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
+package com.example.dhucs;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -19,23 +14,25 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.dhucs.AddActivity;
-import com.example.dhucs.R;
 import com.example.dhucs.adapter.BaseRecyclerAdapter;
 import com.example.dhucs.listeners.OnItemClickListener;
 import com.example.dhucs.model.Activities;
+import com.example.dhucs.model.User;
 import com.example.dhucs.net.Urls;
+import com.example.dhucs.utils.PrefUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,30 +41,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class UserAcFragment extends Fragment
+public class UserHaveActivity extends AppCompatActivity
 {
-
-    public UserAcFragment()
-    {
-        // Required empty public constructor
-    }
-
+    private ImageView haveacback;
     private RecyclerView recyvle;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
+    protected void onCreate(Bundle savedInstanceState)
     {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_ac, container, false);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_have);
+        haveacback = findViewById(R.id.haveacback);
+        haveacback.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                finish();
+            }
+        });
+        recyvle = findViewById(R.id.recyvle);
         requestData();
-        recyvle = view.findViewById(R.id.recyvle);
-
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
             @Override
@@ -78,7 +74,7 @@ public class UserAcFragment extends Fragment
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        recyvle.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        recyvle.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         initData();
         recyvle.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener()
@@ -87,15 +83,13 @@ public class UserAcFragment extends Fragment
             public void onItemClick(@NonNull int position)
             {
                 final Activities activities = activitiesList.get(position);
-                startActivity(new Intent(getActivity(), AddActivity.class)
-                        .putExtra("title", activities.getTitle())
+                startActivity(new Intent(UserHaveActivity.this, UserScanActivity.class).putExtra("title", activities.getTitle())
                         .putExtra("img", activities.getImage())
                         .putExtra("content", activities.getContent())
-                        .putExtra("ids", activities.getId()));
+                        .putExtra("ids", activities.getId()))
+                ;
             }
         });
-        return view;
-
     }
 
     private BaseRecyclerAdapter adapter;
@@ -152,7 +146,7 @@ public class UserAcFragment extends Fragment
             {
                 case 1:
                     String string = (String) msg.obj;
-                    Log.e("测试接口", string);
+                    Log.e("测试接口333", string);
                     Gson gson = new Gson();
                     activitiesList = gson.fromJson(string, new TypeToken<List<Activities>>()
                     {
@@ -173,9 +167,13 @@ public class UserAcFragment extends Fragment
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .build();
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), "");
+        User user = new User();
+        user.setId(PrefUtils.getInt(this, "userId", 0));
+        Gson gson = new Gson();
+        String Json = gson.toJson(user);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
         final Request request = new Request.Builder()
-                .url(Urls.getAllActivity)
+                .url(Urls.getAllActivityForUser)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -201,7 +199,7 @@ public class UserAcFragment extends Fragment
 
     protected void showLoadingDialog()
     {
-        loadingDialog = new MaterialDialog.Builder(getActivity()).content(R.string.loading).progress(true, 0).build();
+        loadingDialog = new MaterialDialog.Builder(this).content(R.string.loading).progress(true, 0).build();
         if (loadingDialog != null && !loadingDialog.isShowing())
         {
             loadingDialog.show();

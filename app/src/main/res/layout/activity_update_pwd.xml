@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".UserActivity">
+    tools:context=".UpdatePwdActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,11 +13,9 @@
         android:background="@color/button_red">
 
         <ImageView
-
             android:id="@+id/title"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:src="@mipmap/back" />
 
@@ -26,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="个人资料"
+            android:text="修改密码"
             android:textColor="@color/white"
             android:textSize="30sp" />
 
@@ -36,43 +33,19 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/button_red"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <com.example.dhucs.views.CircleImageView
-            android:id="@+id/user_img"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginTop="50dp"
-
-            android:src="@mipmap/ic_launcher" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="50dp"
-            android:text="点击图片修改头像"
-            android:textColor="@color/white"></TextView>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:padding="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="姓名："
+            android:text="旧密码："
             android:textSize="22sp" />
 
         <EditText
-            android:id="@+id/user_name"
+            android:id="@+id/old_pwd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:password="true"
             android:singleLine="true" />
     </LinearLayout>
 
@@ -84,42 +57,35 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="生日："
+            android:text="新密码："
             android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/user_bth"
+        <EditText
+            android:id="@+id/new_pwd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="1999-20-30"
-            android:textSize="22sp" />
-
-
+            android:password="true"
+            android:singleLine="true" />
     </LinearLayout>
 
-    <RadioGroup
-        android:id="@+id/user_group"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:padding="10dp">
 
-        <RadioButton
-            android:id="@+id/user_man"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确认密码："
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/new_pwd2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="男" />
-
-        <RadioButton
-            android:id="@+id/user_woman"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="女" />
-    </RadioGroup>
+            android:password="true"
+            android:singleLine="true" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/mine_exit"
@@ -130,7 +96,7 @@
         android:layout_marginRight="30dp"
         android:background="@drawable/loginbc"
         android:padding="10dp"
-        android:text="保存设置"
+        android:text="提交修改"
         android:textColor="@color/white"
         android:textSize="22sp" />
 </LinearLayout>

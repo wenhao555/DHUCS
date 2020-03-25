@@ -6,8 +6,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.dhucs.fragment.AdminAcFragment;
 import com.example.dhucs.fragment.AdminFengFragment;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity
         userAcFragment = new UserAcFragment();
         userFengFragment = new UserFengFragment();
         mineFragment = new MineFragment();
+
         fragmentsAdmin = new Fragment[]{adminAcFragment, adminFengFragment, adminUserFragment};
         fragmentsUser = new Fragment[]{userAcFragment, userFengFragment, mineFragment};
         lastFragments = 0;
@@ -49,14 +52,14 @@ public class MainActivity extends AppCompatActivity
         {
             bottomNavigation2.setVisibility(View.GONE);
             getSupportFragmentManager().beginTransaction().replace(R.id.mframeLayout, fragmentsAdmin[0]).show(fragmentsAdmin[0]).commit();
+            bottomNavigation.setOnNavigationItemSelectedListener(changeFragment);
         } else
         {
             bottomNavigation.setVisibility(View.GONE);
             getSupportFragmentManager().beginTransaction().replace(R.id.mframeLayout, fragmentsUser[0]).show(fragmentsUser[0]).commit();
+            bottomNavigation2.setOnNavigationItemSelectedListener(changeFragment);
         }
 
-
-        bottomNavigation.setOnNavigationItemSelectedListener(changeFragment);
 
     }
 

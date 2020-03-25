@@ -1,12 +1,7 @@
-package com.example.dhucs.fragment;
-
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
+package com.example.dhucs;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -19,19 +14,20 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.example.dhucs.AddActivity;
-import com.example.dhucs.R;
 import com.example.dhucs.adapter.BaseRecyclerAdapter;
 import com.example.dhucs.listeners.OnItemClickListener;
 import com.example.dhucs.model.Activities;
@@ -44,30 +40,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class UserAcFragment extends Fragment
+public class ThisUserActivity extends AppCompatActivity
 {
-
-    public UserAcFragment()
-    {
-        // Required empty public constructor
-    }
-
+    private ImageView haveaacback;
     private RecyclerView recyvle;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
+    protected void onCreate(Bundle savedInstanceState)
     {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_ac, container, false);
-        requestData();
-        recyvle = view.findViewById(R.id.recyvle);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_this_user);
+        haveaacback=findViewById(R.id.haveacbacks);
+        haveaacback.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                finish();
+            }
+        });
+        recyvle = findViewById(R.id.recyvle);
 
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
             @Override
@@ -78,7 +73,8 @@ public class UserAcFragment extends Fragment
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-        recyvle.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+
+        recyvle.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         initData();
         recyvle.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener()
@@ -87,15 +83,12 @@ public class UserAcFragment extends Fragment
             public void onItemClick(@NonNull int position)
             {
                 final Activities activities = activitiesList.get(position);
-                startActivity(new Intent(getActivity(), AddActivity.class)
-                        .putExtra("title", activities.getTitle())
+                startActivity(new Intent(ThisUserActivity.this, AddActivity.class).putExtra("title", activities.getTitle())
                         .putExtra("img", activities.getImage())
                         .putExtra("content", activities.getContent())
                         .putExtra("ids", activities.getId()));
             }
         });
-        return view;
-
     }
 
     private BaseRecyclerAdapter adapter;
@@ -114,7 +107,16 @@ public class UserAcFragment extends Fragment
                 ImageView item_img = holder.getView(R.id.item_img);
                 TextView item_title = holder.getView(R.id.item_title);
                 TextView item_new = holder.getView(R.id.item_new);
-                TextView item_date = holder.getView(R.id.item_date);
+                Button item_setting = holder.getView(R.id.item_setting);
+                item_setting.setVisibility(View.VISIBLE);
+                item_setting.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        requestAdmin();
+                    }
+                });
                 item_title.setText(activities.getTitle());
                 item_new.setText(activities.getContent());
                 if (!activities.getImage().equals(""))
@@ -141,6 +143,39 @@ public class UserAcFragment extends Fragment
                 return activitiesList.size();
             }
         };
+    }
+
+    private void requestAdmin()
+    {
+        showLoadingDialog();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build();
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), "");
+        final Request request = new Request.Builder()
+                .url(Urls.getAllActivityForUser)
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Call call, IOException e)
+            {
+                Log.e("error", "connectFail");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException
+            {
+                Message msg = new Message();
+                msg.what = 2;
+                msg.obj = response.body().string();
+                mHandler.sendMessage(msg);
+                dismissLoadingDialog();
+            }
+        });
     }
 
     private Handler mHandler = new Handler(new Handler.Callback()
@@ -175,7 +210,7 @@ public class UserAcFragment extends Fragment
                 .build();
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), "");
         final Request request = new Request.Builder()
-                .url(Urls.getAllActivity)
+                .url(Urls.getAllActivityForUser)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -201,7 +236,7 @@ public class UserAcFragment extends Fragment
 
     protected void showLoadingDialog()
     {
-        loadingDialog = new MaterialDialog.Builder(getActivity()).content(R.string.loading).progress(true, 0).build();
+        loadingDialog = new MaterialDialog.Builder(this).content(R.string.loading).progress(true, 0).build();
         if (loadingDialog != null && !loadingDialog.isShowing())
         {
             loadingDialog.show();

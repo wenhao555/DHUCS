@@ -26,11 +26,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.dhucs.adapter.BaseRecyclerAdapter;
 import com.example.dhucs.listeners.OnItemClickListener;
 import com.example.dhucs.model.Activities;
+import com.example.dhucs.model.User;
 import com.example.dhucs.net.Urls;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,6 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 查看报名用户
+ */
 public class ThisUserActivity extends AppCompatActivity
 {
     private ImageView haveaacback;
@@ -51,7 +56,7 @@ public class ThisUserActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_this_user);
-        haveaacback=findViewById(R.id.haveacbacks);
+        haveaacback = findViewById(R.id.haveacbacks);
         haveaacback.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -61,7 +66,7 @@ public class ThisUserActivity extends AppCompatActivity
             }
         });
         recyvle = findViewById(R.id.recyvle);
-
+        requestData();
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
@@ -77,22 +82,22 @@ public class ThisUserActivity extends AppCompatActivity
         recyvle.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         initData();
         recyvle.setAdapter(adapter);
-        adapter.setOnItemClickListener(new OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(@NonNull int position)
-            {
-                final Activities activities = activitiesList.get(position);
-                startActivity(new Intent(ThisUserActivity.this, AddActivity.class).putExtra("title", activities.getTitle())
-                        .putExtra("img", activities.getImage())
-                        .putExtra("content", activities.getContent())
-                        .putExtra("ids", activities.getId()));
-            }
-        });
+//        adapter.setOnItemClickListener(new OnItemClickListener()
+//        {
+//            @Override
+//            public void onItemClick(@NonNull int position)
+//            {
+//                final User activities = activitiesList.get(position);
+//                startActivity(new Intent(ThisUserActivity.this, AddActivity.class).putExtra("title", activities.getName())
+//                        .putExtra("img", activities.getImage())
+//                        .putExtra("content", activities.getAccount())
+//                        .putExtra("ids", activities.getId()));
+//            }
+//        });
     }
 
     private BaseRecyclerAdapter adapter;
-    private List<Activities> activitiesList = new ArrayList<>();
+    private List<User> activitiesList = new ArrayList<>();
     protected MaterialDialog loadingDialog;
 
 
@@ -103,22 +108,46 @@ public class ThisUserActivity extends AppCompatActivity
             @Override
             protected void onBindView(@NonNull BaseViewHolder holder, @NonNull final int position)
             {
-                final Activities activities = activitiesList.get(position);
+                final User activities = activitiesList.get(position);
                 ImageView item_img = holder.getView(R.id.item_img);
                 TextView item_title = holder.getView(R.id.item_title);
                 TextView item_new = holder.getView(R.id.item_new);
+                Button item_pass = holder.getView(R.id.item_pass);
                 Button item_setting = holder.getView(R.id.item_setting);
-                item_setting.setVisibility(View.VISIBLE);
+                item_pass.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        requestTongguo(activities);
+                    }
+                });
                 item_setting.setOnClickListener(new View.OnClickListener()
                 {
                     @Override
                     public void onClick(View v)
                     {
-                        requestAdmin();
+
+                        requestGuanLi(activities);
                     }
                 });
-                item_title.setText(activities.getTitle());
-                item_new.setText(activities.getContent());
+                for (User user : activitiesList)
+                {
+                    if (user.getActivityAdmin() != null)
+                    {
+                        if (user.getActivityAdmin())
+                        {
+                            item_pass.setText("管理员");
+                            item_setting.setVisibility(View.GONE);
+                        } else
+                        {
+                            item_setting.setVisibility(View.VISIBLE);
+                            item_pass.setText("通过");
+                        }
+                    }
+                }
+                item_title.setText(activities.getName());
+                item_new.setText(activities.getAccount());
                 if (!activities.getImage().equals(""))
                 {
                     item_img.setVisibility(View.VISIBLE);
@@ -134,7 +163,7 @@ public class ThisUserActivity extends AppCompatActivity
             @Override
             protected int getLayoutResId(int position)
             {
-                return R.layout.iten_adapter;
+                return R.layout.item_audit;
             }
 
             @Override
@@ -145,16 +174,26 @@ public class ThisUserActivity extends AppCompatActivity
         };
     }
 
-    private void requestAdmin()
+    private void requestTongguo(User user)
     {
         showLoadingDialog();
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .build();
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), "");
+        List<User> users = new ArrayList<>();
+        List<Integer> integers = new ArrayList<>();
+        integers.add(getIntent().getIntExtra("ids", 0));
+        user.setAccessActivityList(integers);
+        users.add(user);
+        Activities activities = new Activities();
+        activities.setAccessUserList(users);
+        activities.setId(getIntent().getIntExtra("ids", 0));
+        Gson gson = new Gson();
+        String Json = gson.toJson(activities);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
         final Request request = new Request.Builder()
-                .url(Urls.getAllActivityForUser)
+                .url(Urls.accessUserForActivity)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -170,7 +209,7 @@ public class ThisUserActivity extends AppCompatActivity
             public void onResponse(Call call, Response response) throws IOException
             {
                 Message msg = new Message();
-                msg.what = 2;
+                msg.what = 3;
                 msg.obj = response.body().string();
                 mHandler.sendMessage(msg);
                 dismissLoadingDialog();
@@ -187,14 +226,34 @@ public class ThisUserActivity extends AppCompatActivity
             {
                 case 1:
                     String string = (String) msg.obj;
-                    Log.e("测试接口", string);
                     Gson gson = new Gson();
-                    activitiesList = gson.fromJson(string, new TypeToken<List<Activities>>()
+                    activitiesList = gson.fromJson(string, new TypeToken<List<User>>()
                     {
                     }.getType());
                     adapter.notifyDataSetChanged();
                     break;
+                case 2:
+                    if (!Boolean.parseBoolean(msg.obj.toString()))
+                    {
+                        Toast.makeText(ThisUserActivity.this, "设置管理员失败", Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        Toast.makeText(ThisUserActivity.this, "设置管理员成功", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
 
+                    break;
+                case 3:
+                    if (!Boolean.parseBoolean(msg.obj.toString()))
+                    {
+                        Toast.makeText(ThisUserActivity.this, "审核失败", Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        Toast.makeText(ThisUserActivity.this, "审核成功", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                    break;
             }
             return true;
         }
@@ -208,9 +267,13 @@ public class ThisUserActivity extends AppCompatActivity
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .build();
-        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), "");
+        Activities activities = new Activities();
+        activities.setId(getIntent().getIntExtra("ids", 0));
+        Gson gson = new Gson();
+        String Json = gson.toJson(activities);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
         final Request request = new Request.Builder()
-                .url(Urls.getAllActivityForUser)
+                .url(Urls.getUserListForActivity)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -227,6 +290,45 @@ public class ThisUserActivity extends AppCompatActivity
             {
                 Message msg = new Message();
                 msg.what = 1;
+                msg.obj = response.body().string();
+                mHandler.sendMessage(msg);
+                dismissLoadingDialog();
+            }
+        });
+    }
+
+    private void requestGuanLi(User user)
+    {
+
+        showLoadingDialog();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build();
+        Activities activities = new Activities();
+        activities.setId(getIntent().getIntExtra("ids", 0));
+        activities.setActivityAdminUser(user);
+        Gson gson = new Gson();
+        String Json = gson.toJson(activities);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
+        final Request request = new Request.Builder()
+                .url(Urls.setActivityAdminUser)
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Call call, IOException e)
+            {
+                Log.e("error", "connectFail");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException
+            {
+                Message msg = new Message();
+                msg.what = 2;
                 msg.obj = response.body().string();
                 mHandler.sendMessage(msg);
                 dismissLoadingDialog();

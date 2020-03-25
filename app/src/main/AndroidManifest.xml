@@ -14,7 +14,9 @@
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserScanActivity"></activity>
+        <activity android:name=".UserSuggestActivity"></activity>
+        <activity android:name=".AdminSuggestActivity" />
+        <activity android:name=".UserScanActivity" />
         <activity android:name=".ThisUserActivity" />
         <activity android:name=".UserHaveActivity" />
         <activity android:name=".AddFengActivity" />
@@ -23,7 +25,6 @@
         <activity android:name=".BaseActivity" />
         <activity android:name=".AddActivity" />
         <activity android:name=".UserActivity" />
-        <activity android:name=".FengcaiActivity" />
         <activity android:name=".ActivitesActivity" />
         <activity android:name=".RegistActivity" />
         <activity android:name=".LoginActivity">

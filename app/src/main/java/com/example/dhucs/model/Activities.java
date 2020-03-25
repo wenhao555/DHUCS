@@ -19,7 +19,20 @@ public class Activities implements Serializable
     private List<String> suggestList;
     // 签退的user
     private User signOffUser;
+    // 审核通过的user
+    private List<User> accessUserList;
 
+    public List<User> getAccessUserList()
+    {
+        return accessUserList;
+    }
+
+    public void setAccessUserList(List<User> accessUserList)
+    {
+        this.accessUserList = accessUserList;
+    }
+
+    // 审核通过的user
     public int getId()
     {
         return id;

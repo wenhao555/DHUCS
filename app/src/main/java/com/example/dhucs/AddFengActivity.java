@@ -32,6 +32,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -127,7 +128,8 @@ public class AddFengActivity
     private TextView addAc_type;
     private EditText addAc_title, addAc_content;
     private ImageView addAc_img;
-    private Button addAc_commit, addAc_delete;
+    private Button addAc_commit, addAc_delete, search_user, search_suggest;
+    private LinearLayout isUserLinear;
 
     @Override
     public void initView()
@@ -137,6 +139,12 @@ public class AddFengActivity
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
         }
+        search_user = findViewById(R.id.search_user);
+        isUserLinear = findViewById(R.id.isUserLinear);
+        search_user.setVisibility(View.GONE);
+        isUserLinear.setVisibility(View.GONE);
+        search_suggest = findViewById(R.id.search_suggest);
+        search_suggest.setVisibility(View.GONE);
         addAc_back = findViewById(R.id.addAc_back);
         addAc_type = findViewById(R.id.addAc_type);
         addAc_title = findViewById(R.id.addAc_title);

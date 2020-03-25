@@ -13,9 +13,36 @@ public class User implements Serializable
     private String birth;
     private Boolean admin;
     private String image;
-
     // 已报名的活动
     private List<Integer> signActivityList;
+    // 审核通过的活动
+    private List<Integer> accessActivityList;
+    private Boolean activityAdmin;
+
+    public Boolean getActivityAdmin()
+    {
+        return activityAdmin;
+    }
+
+    public void setActivityAdmin(Boolean activityAdmin)
+    {
+        this.activityAdmin = activityAdmin;
+    }
+
+    // 审核通过的活动
+
+    public List<Integer> getAccessActivityList()
+    {
+        return accessActivityList;
+    }
+
+    public void setAccessActivityList(List<Integer> accessActivityList)
+    {
+        this.accessActivityList = accessActivityList;
+    }
+
+    // 已报名的活动
+
     public String getImage()
     {
         return image;

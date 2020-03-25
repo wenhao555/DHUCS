@@ -46,4 +46,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation files('libs/sun.misc.BASE64Decoder.jar')
     implementation project(path: ':mypicker')
+    implementation 'com.google.zxing:core:3.2.1'
+    implementation 'cn.bingoogolapple:bga-qrcodecore:1.1.7@aar'
+    implementation 'cn.bingoogolapple:bga-zxing:1.1.7@aar'
 }

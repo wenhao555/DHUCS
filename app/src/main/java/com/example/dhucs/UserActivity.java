@@ -68,7 +68,7 @@ import java.util.concurrent.TimeUnit;
 public class UserActivity extends AppCompatActivity implements View.OnClickListener
 {
     private ImageView title;
-    private TextView user_bth;
+    private TextView user_bth, info;
     private EditText user_name;
     private RadioGroup user_group;
     private Dialog dateDialog;
@@ -115,6 +115,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         title = findViewById(R.id.title);
+        info = findViewById(R.id.info);
         mine_exit = findViewById(R.id.mine_exit);
         mine_exit.setOnClickListener(new View.OnClickListener()
         {
@@ -136,6 +137,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         title.setOnClickListener(this);
         user_bth = findViewById(R.id.user_bth);
         user_woman = findViewById(R.id.user_woman);
+        dianji = findViewById(R.id.dianji);
         user_man = findViewById(R.id.user_man);
         user_bth.setText(PrefUtils.getString(this, "birth", ""));
         user_bth.setOnClickListener(this);
@@ -176,8 +178,38 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 toPicture();
             }
         });
+        if (PrefUtils.getBoolean(this, "isAdmin", true))
+        {
+            if (!getIntent().getStringExtra("img").equals(""))
+            {
+                byte[] decodedString = Base64.decode(getIntent().getStringExtra("img")
+                        .substring(getIntent().getStringExtra("img")
+                                .indexOf(",") + 1), Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                user_img.setImageBitmap(decodedByte);
+            }
+            dianji.setVisibility(View.INVISIBLE);
+            user_name.setText(getIntent().getStringExtra("name"));
+            user_bth.setText(getIntent().getStringExtra("birth"));
+            user_bth.setEnabled(false);
+            user_name.setEnabled(false);
+            user_img.setEnabled(false);
+            user_man.setEnabled(false);
+            user_woman.setEnabled(false);
+            info.setText("用户资料");
+
+            if (getIntent().getStringExtra("sex").equals("男"))
+            {
+                user_man.setChecked(true);
+            } else
+            {
+                user_woman.setChecked(true);
+            }
+            mine_exit.setVisibility(View.INVISIBLE);
+        }
     }
 
+    private TextView dianji;
     private String picturePath = "";
     public static File file;
     public static Uri uri01;

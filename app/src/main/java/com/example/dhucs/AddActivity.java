@@ -136,7 +136,7 @@ public class AddActivity extends BaseActivity
     private TextView addAc_type;
     private EditText addAc_title, addAc_content;
     private ImageView addAc_img;
-    private Button addAc_commit, addAc_delete, search_user, addAc_apply;
+    private Button addAc_commit, addAc_delete, search_user, addAc_apply, search_suggest;
     private LinearLayout isUserLinear, isAdminLinear;
 
     @Override
@@ -148,6 +148,15 @@ public class AddActivity extends BaseActivity
             StrictMode.setVmPolicy(builder.build());
         }
         isUserLinear = findViewById(R.id.isUserLinear);
+        search_suggest = findViewById(R.id.search_suggest);
+        search_suggest.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(AddActivity.this, AdminSuggestActivity.class).putExtra("ids", ids));
+            }
+        });
         isAdminLinear = findViewById(R.id.isAdminLinear);
         search_user = findViewById(R.id.search_user);
         addAc_apply = findViewById(R.id.addAc_apply);
@@ -378,7 +387,8 @@ public class AddActivity extends BaseActivity
                 break;
             case R.id.search_user:
                 startActivity(new Intent(this, ThisUserActivity.class)
-                        .putExtra("ids", ids));
+                        .putExtra("ids", ids)
+                            );
                 break;
             case R.id.addAc_apply:
                 requestApply();

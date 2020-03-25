@@ -92,6 +92,7 @@
             android:text="删除"
             android:textAllCaps="false"
             android:textColor="#ffffff" />
+
         <Button
             android:id="@+id/search_user"
             android:layout_width="match_parent"
@@ -99,10 +100,22 @@
             android:layout_margin="10dp"
             android:layout_weight="1"
             android:background="@drawable/loginbc"
-            android:text="查看报名用户"
+            android:text="查看用户"
+            android:textAllCaps="false"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:id="@+id/search_suggest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/loginbc"
+            android:text="查看反馈"
             android:textAllCaps="false"
             android:textColor="#ffffff" />
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/isUserLinear"
         android:layout_width="match_parent"
@@ -123,7 +136,6 @@
             android:textColor="#ffffff" />
 
         <Button
-            android:visibility="gone"
             android:id="@+id/addAc_scan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -132,9 +144,10 @@
             android:background="@drawable/loginbc"
             android:text="签到"
             android:textAllCaps="false"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:visibility="gone" />
+
         <Button
-            android:visibility="gone"
             android:id="@+id/search_qr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -143,6 +156,7 @@
             android:background="@drawable/loginbc"
             android:text="二维码"
             android:textAllCaps="false"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

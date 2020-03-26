@@ -1,6 +1,7 @@
 package com.example.dhucs;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -132,7 +133,8 @@ public class UserHaveActivity extends AppCompatActivity
                                 @Override
                                 public void onClick(View v)
                                 {
-                                    Toast.makeText(UserHaveActivity.this, "已签到", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(UserHaveActivity.this, "已签到", Toast.LENGTH_SHORT).show();
+                                    startActivityForResult(new Intent(UserHaveActivity.this, ScanQrActivity.class), 1111);
                                 }
                             });
                             item_setting.setText("签退");
@@ -192,6 +194,16 @@ public class UserHaveActivity extends AppCompatActivity
                 return activitiesList.size();
             }
         };
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1111 && resultCode == 111)
+        {
+            String string = data.getStringExtra("signCode");
+        }
     }
 
     private void requestSignoff(int id)

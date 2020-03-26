@@ -3,6 +3,7 @@
     package="com.example.dhucs">
     <!-- 拍照 -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 读写 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.PERMISSIONS_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,7 +15,8 @@
         android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserSuggestActivity"></activity>
+        <activity android:name=".ScanQrActivity"></activity>
+        <activity android:name=".UserSuggestActivity" />
         <activity android:name=".AdminSuggestActivity" />
         <activity android:name=".UserScanActivity" />
         <activity android:name=".ThisUserActivity" />

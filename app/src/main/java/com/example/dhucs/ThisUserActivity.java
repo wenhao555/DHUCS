@@ -138,7 +138,17 @@ public class ThisUserActivity extends AppCompatActivity
                         if (user.getActivityAdmin())
                         {
                             item_pass.setText("管理员");
-                            item_setting.setVisibility(View.GONE);
+                            item_setting.setVisibility(View.VISIBLE);
+                            item_setting.setText("取消管理员");
+                            item_setting.setOnClickListener(new View.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(View v)
+                                {
+                                    requestCancel(activities);
+                                }
+                            });
+
                         } else
                         {
                             item_setting.setVisibility(View.VISIBLE);
@@ -172,6 +182,44 @@ public class ThisUserActivity extends AppCompatActivity
                 return activitiesList.size();
             }
         };
+    }
+
+    private void requestCancel(User user)
+    {
+        showLoadingDialog();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build();
+        Activities activities = new Activities();
+        activities.setId(getIntent().getIntExtra("ids", 0));
+        activities.setActivityAdminUser(user);
+        Gson gson = new Gson();
+        String Json = gson.toJson(activities);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
+        final Request request = new Request.Builder()
+                .url(Urls.accessUserForActivity)
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Call call, IOException e)
+            {
+                Log.e("error", "connectFail");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException
+            {
+                Message msg = new Message();
+                msg.what = 4;
+                msg.obj = response.body().string();
+                mHandler.sendMessage(msg);
+                dismissLoadingDialog();
+            }
+        });
     }
 
     private void requestTongguo(User user)
@@ -254,6 +302,18 @@ public class ThisUserActivity extends AppCompatActivity
                     }
 
                     break;
+                case 4:
+                    if (!Boolean.parseBoolean(msg.obj.toString()))
+                    {
+                        Toast.makeText(ThisUserActivity.this, "取消管理员失败", Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        Toast.makeText(ThisUserActivity.this, "取消管理员成功", Toast.LENGTH_SHORT).show();
+                        requestData();
+                        finish();
+                    }
+
+                    break;
             }
             return true;
         }
@@ -297,6 +357,11 @@ public class ThisUserActivity extends AppCompatActivity
         });
     }
 
+    /**
+     * 设置管理员
+     *
+     * @param user
+     */
     private void requestGuanLi(User user)
     {
 
@@ -310,6 +375,7 @@ public class ThisUserActivity extends AppCompatActivity
         activities.setActivityAdminUser(user);
         Gson gson = new Gson();
         String Json = gson.toJson(activities);
+        Log.e("测试管理员", Json);
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
         final Request request = new Request.Builder()
                 .url(Urls.setActivityAdminUser)

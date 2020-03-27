@@ -11,12 +11,35 @@ public class Activities implements Serializable
     private List<User> activityUserList;
     private String image;
     private String title;
+    private String date;
     // 活动内容
     private String content;
     // 活动管理员
     private User activityAdminUser;
     //建议内容
     private List<String> suggestList;
+
+    public List<User> getSignUserList()
+    {
+        return signUserList;
+    }
+
+    public void setSignUserList(List<User> signUserList)
+    {
+        this.signUserList = signUserList;
+    }
+
+    private List<User> signUserList;
+    public String getDate()
+    {
+        return date;
+    }
+
+    public void setDate(String date)
+    {
+        this.date = date;
+    }
+
     // 签退的user
     private User signOffUser;
     // 审核通过的user

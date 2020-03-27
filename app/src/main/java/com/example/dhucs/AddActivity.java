@@ -51,7 +51,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +72,7 @@ public class AddActivity extends BaseActivity
     private String content, titles, imgs;
     private int ids;
     private boolean isFirst;
+    private List<User> userList = new ArrayList<>();
 
     @Override
     public void initData()
@@ -90,6 +94,7 @@ public class AddActivity extends BaseActivity
                 content = getIntent().getStringExtra("content");
                 imgs = getIntent().getStringExtra("img");
                 ids = getIntent().getIntExtra("ids", 0);
+                userList = (List<User>) getIntent().getSerializableExtra("userList");
                 addAc_title.setText(titles);
                 addAc_title.setEnabled(true);
                 addAc_content.setText(content);
@@ -179,6 +184,10 @@ public class AddActivity extends BaseActivity
         final Activities activities = new Activities();
         activities.setContent(addAc_content.getText().toString());
         activities.setTitle(addAc_title.getText().toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");// HH:mm:ss
+//获取当前时间
+        Date date = new Date(System.currentTimeMillis());
+        activities.setDate(simpleDateFormat.format(date));
         activities.setId(ids);
         if (haveImg)
             activities.setImage(fileToBase64(file));
@@ -222,6 +231,10 @@ public class AddActivity extends BaseActivity
         final Activities activities = new Activities();
         activities.setContent(addAc_content.getText().toString());
         activities.setTitle(addAc_title.getText().toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月dd日");// HH:mm:ss
+//获取当前时间
+        Date date = new Date(System.currentTimeMillis());
+        activities.setDate(simpleDateFormat.format(date));
         if (haveImg)
             activities.setImage(fileToBase64(file));
         else
@@ -388,7 +401,8 @@ public class AddActivity extends BaseActivity
             case R.id.search_user:
                 startActivity(new Intent(this, ThisUserActivity.class)
                         .putExtra("ids", ids)
-                            );
+                        .putExtra("userList", (Serializable) userList)
+                );
                 break;
             case R.id.addAc_apply:
                 requestApply();
@@ -413,6 +427,7 @@ public class AddActivity extends BaseActivity
         user.setBirth(PrefUtils.getString(this, "birth", ""));
         user.setImage(PrefUtils.getString(this, "imgpath", ""));
         user.setSex(PrefUtils.getString(this, "sex", ""));
+        user.setAccess(false);
         users.add(user);
         final Activities activities = new Activities();
         activities.setId(ids);

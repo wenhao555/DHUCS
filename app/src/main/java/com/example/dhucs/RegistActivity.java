@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 public class RegistActivity extends AppCompatActivity
 {
 
-    private EditText account, password, name;
+    private EditText account, password, name, stuNo;
     private Button regist_commit;
     private Dialog dateDialog;
     private TextView user_bth;
@@ -54,6 +54,7 @@ public class RegistActivity extends AppCompatActivity
         setContentView(R.layout.activity_regist);
         account = findViewById(R.id.account);
         name = findViewById(R.id.name);
+        stuNo = findViewById(R.id.stuNo);
         user_bth = findViewById(R.id.user_bth);
         user_group = findViewById(R.id.user_group);
 
@@ -94,6 +95,7 @@ public class RegistActivity extends AppCompatActivity
                 String accounts = account.getText().toString();
                 String names = name.getText().toString();
                 String bth = user_bth.getText().toString();
+                String stuNos = stuNo.getText().toString();
                 OkHttpClient okHttpClient = new OkHttpClient.Builder()
                         .connectTimeout(10, TimeUnit.SECONDS)
                         .readTimeout(10, TimeUnit.SECONDS)
@@ -120,6 +122,9 @@ public class RegistActivity extends AppCompatActivity
                 user.setBirth(bth);
                 user.setImage("");
                 user.setAdmin(false);
+                user.setStuNo(stuNos);
+                user.setAccess(false);
+                user.setActivityAdmin(false);
                 Gson gson = new Gson();
                 String Json = gson.toJson(user);
                 RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);

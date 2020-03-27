@@ -69,7 +69,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 {
     private ImageView title;
     private TextView user_bth, info;
-    private EditText user_name;
+    private EditText user_name, user_stuNo;
     private RadioGroup user_group;
     private Dialog dateDialog;
     private String isMan = "男";
@@ -115,6 +115,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         title = findViewById(R.id.title);
+        user_stuNo = findViewById(R.id.user_stuNo);
         info = findViewById(R.id.info);
         mine_exit = findViewById(R.id.mine_exit);
         mine_exit.setOnClickListener(new View.OnClickListener()
@@ -143,6 +144,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         user_bth.setOnClickListener(this);
         user_name = findViewById(R.id.user_name);
         user_name.setText(PrefUtils.getString(this, "name", ""));
+        user_stuNo.setText(PrefUtils.getString(this, "stuNo", ""));
+        user_stuNo.setEnabled(false);
         user_group = findViewById(R.id.user_group);
 
         if (PrefUtils.getString(this, "sex", "").equals("男"))

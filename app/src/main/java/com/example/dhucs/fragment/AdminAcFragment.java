@@ -47,6 +47,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -109,10 +110,12 @@ public class AdminAcFragment extends Fragment
             public void onItemClick(@NonNull int position)
             {
                 final Activities activities = activitiesList.get(position);
-                startActivity(new Intent(getActivity(), AddActivity.class).putExtra("title", activities.getTitle())
+                startActivity(new Intent(getActivity(), AddActivity.class)
+                        .putExtra("title", activities.getTitle())
                         .putExtra("img", activities.getImage())
                         .putExtra("content", activities.getContent())
-                        .putExtra("ids", activities.getId()));
+                        .putExtra("ids", activities.getId())
+                        .putExtra("userList", (Serializable) activities.getActivityUserList()));
             }
         });
         return view;
@@ -159,6 +162,7 @@ public class AdminAcFragment extends Fragment
                 TextView item_new = holder.getView(R.id.item_new);
                 TextView item_date = holder.getView(R.id.item_date);
                 item_title.setText(activities.getTitle());
+                item_date.setText(activities.getDate());
                 item_new.setText(activities.getContent());
                 if (!activities.getImage().equals(""))
                 {

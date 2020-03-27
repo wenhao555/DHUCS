@@ -50,6 +50,7 @@ public class ThisUserActivity extends AppCompatActivity
     private ImageView haveaacback;
     private RecyclerView recyvle;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private List<User> userList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -66,6 +67,7 @@ public class ThisUserActivity extends AppCompatActivity
             }
         });
         recyvle = findViewById(R.id.recyvle);
+        userList = (List<User>) getIntent().getSerializableExtra("userList");
         requestData();
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -114,48 +116,63 @@ public class ThisUserActivity extends AppCompatActivity
                 TextView item_new = holder.getView(R.id.item_new);
                 Button item_pass = holder.getView(R.id.item_pass);
                 Button item_setting = holder.getView(R.id.item_setting);
-                item_pass.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
+                if (activities.getAccess() != null)
+                {//通过集合
+                    if (activities.getAccess())
                     {
-                        requestTongguo(activities);
-                    }
-                });
-                item_setting.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-
-                        requestGuanLi(activities);
-                    }
-                });
-                for (User user : activitiesList)
-                {
-                    if (user.getActivityAdmin() != null)
-                    {
-                        if (user.getActivityAdmin())
-                        {
-                            item_pass.setText("管理员");
-                            item_setting.setVisibility(View.VISIBLE);
-                            item_setting.setText("取消管理员");
-                            item_setting.setOnClickListener(new View.OnClickListener()
+                        item_pass.setText("已通过");
+                        if (activities.getActivityAdmin() != null)
+                        {//是否是管理员
+                            if (activities.getActivityAdmin())
                             {
-                                @Override
-                                public void onClick(View v)
-                                {
-                                    requestCancel(activities);
-                                }
-                            });
 
+                                item_setting.setText("取消管理");
+                            }
                         } else
                         {
-                            item_setting.setVisibility(View.VISIBLE);
-                            item_pass.setText("通过");
+
+                            item_setting.setText("设置管理");
+                        }
+                    } else
+                    {
+                        item_pass.setText("通过");
+                    }
+
+                } else
+                {
+                    item_pass.setText("通过");
+                    item_setting.setText("设置管理");
+                }
+                item_pass.setOnClickListener(new View.OnClickListener()
+                {// 通过
+                    @Override
+                    public void onClick(View v)
+                    {
+                        if (item_pass.getText().toString().equals("已通过"))
+                            Toast.makeText(ThisUserActivity.this, "不能重复通过", Toast.LENGTH_SHORT).show();
+                        else
+                            requestTongguo(activities);
+                    }
+                });
+
+                item_setting.setOnClickListener(new View.OnClickListener()
+                {//取消管理员||设置管理员
+                    @Override
+                    public void onClick(View v)
+                    {
+                        if (item_pass.getText().toString().contains("已"))
+                        {
+                            if (item_setting.getText().toString().contains("设置"))
+                                requestGuanLi(activities);
+                            else if (item_setting.getText().toString().equals("取消管理"))
+                                requestCancel(activities);
+                        } else
+
+                        {
+                            Toast.makeText(ThisUserActivity.this, "请先通过审核", Toast.LENGTH_SHORT).show();
                         }
                     }
-                }
+                });
                 item_title.setText(activities.getName());
                 item_new.setText(activities.getAccount());
                 if (!activities.getImage().equals(""))
@@ -193,12 +210,12 @@ public class ThisUserActivity extends AppCompatActivity
                 .build();
         Activities activities = new Activities();
         activities.setId(getIntent().getIntExtra("ids", 0));
-        activities.setActivityAdminUser(user);
+//        activities.setActivityAdminUser(user);
         Gson gson = new Gson();
         String Json = gson.toJson(activities);
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
         final Request request = new Request.Builder()
-                .url(Urls.accessUserForActivity)
+                .url(Urls.removeActivityAdminUser)
                 .post(requestBody)
                 .build();
         Call call = okHttpClient.newCall(request);
@@ -233,6 +250,7 @@ public class ThisUserActivity extends AppCompatActivity
         List<Integer> integers = new ArrayList<>();
         integers.add(getIntent().getIntExtra("ids", 0));
         user.setAccessActivityList(integers);
+        user.setAccess(true);
         users.add(user);
         Activities activities = new Activities();
         activities.setAccessUserList(users);
@@ -275,6 +293,7 @@ public class ThisUserActivity extends AppCompatActivity
                 case 1:
                     String string = (String) msg.obj;
                     Gson gson = new Gson();
+                    Log.e("返回用户", string);
                     activitiesList = gson.fromJson(string, new TypeToken<List<User>>()
                     {
                     }.getType());
@@ -309,7 +328,7 @@ public class ThisUserActivity extends AppCompatActivity
                     } else
                     {
                         Toast.makeText(ThisUserActivity.this, "取消管理员成功", Toast.LENGTH_SHORT).show();
-                        requestData();
+//                        requestData();
                         finish();
                     }
 

@@ -28,10 +28,12 @@ public class Urls
     public static String setActivityAdminUser = defaultUrl + "/setActivityAdminUser";//管理员设置管理员
     public static String accessUserForActivity = defaultUrl + "/accessUserForActivity";//管理员设置管理员
     public static String getAllSuggest = defaultUrl + "/getAllSuggest";//管理员查看用户反馈
+    public static String removeActivityAdminUser = defaultUrl + "/removeActivityAdminUser";//管理员查看用户反馈
 
 
     public static String signActivity = defaultUrl + "/signActivity";//用户报名
     public static String signOffActivity = defaultUrl + "/signOffActivity";//用户签退
+    public static String signOnActivity = defaultUrl + "/signOnActivity";//用户签退
     public static String addSuggest = defaultUrl + "/addSuggest";//用户反馈
 
 

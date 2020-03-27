@@ -25,9 +25,15 @@
 
     </RelativeLayout>
 
+    <com.youth.banner.Banner
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="260dp" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
+
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView

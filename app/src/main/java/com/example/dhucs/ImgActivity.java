@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -26,7 +27,6 @@ public class ImgActivity extends AppCompatActivity
         image = findViewById(R.id.image);
         close = findViewById(R.id.close);
         imgs = getIntent().getStringExtra("img");
-
         if (imgs.contains("626128095"))
 
         {

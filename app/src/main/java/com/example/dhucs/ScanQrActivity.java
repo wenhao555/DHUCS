@@ -16,7 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class ScanQrActivity extends AppCompatActivity implements QRCodeView.Delegate, EasyPermissions.PermissionCallbacks
@@ -29,6 +31,7 @@ public class ScanQrActivity extends AppCompatActivity implements QRCodeView.Dele
     public TextView tvLight;
     private boolean isLight = false;
     private String type = "";
+    private int ids = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,6 +41,7 @@ public class ScanQrActivity extends AppCompatActivity implements QRCodeView.Dele
         title = findViewById(R.id.title);
         mQRCodeView = findViewById(R.id.zxingview);
         tvLight = findViewById(R.id.tv_light);
+        ids = getIntent().getIntExtra("ids", 0);
         title.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -46,7 +50,7 @@ public class ScanQrActivity extends AppCompatActivity implements QRCodeView.Dele
                 finish();
             }
         });
-
+        mQRCodeView.setDelegate(this);
     }
 
     @Override
@@ -83,17 +87,19 @@ public class ScanQrActivity extends AppCompatActivity implements QRCodeView.Dele
     @Override
     public void onScanQRCodeSuccess(String result)
     {
-//        try {
-//            result = new String(result.getBytes("utf-8"),"GBK");
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        }
-//        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+        try
+        {
+            result = new String(result.getBytes("utf-8"), "GBK");
+        } catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
         vibrate();
         Intent intent = new Intent();
         intent.putExtra("signCode", result);
+        intent.putExtra("ids", ids + "");
         setResult(RESULT_CODE, intent);
-
         finish();
     }
 

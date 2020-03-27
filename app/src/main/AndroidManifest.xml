@@ -27,7 +27,6 @@
         <activity android:name=".BaseActivity" />
         <activity android:name=".AddActivity" />
         <activity android:name=".UserActivity" />
-        <activity android:name=".ActivitesActivity" />
         <activity android:name=".RegistActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

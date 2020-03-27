@@ -83,19 +83,19 @@ public class UserHaveActivity extends AppCompatActivity
         recyvle.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         initData();
         recyvle.setAdapter(adapter);
-        adapter.setOnItemClickListener(new OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(@NonNull int position)
-            {
-                final Activities activities = activitiesList.get(position);
-                startActivity(new Intent(UserHaveActivity.this, UserScanActivity.class).putExtra("title", activities.getTitle())
-                        .putExtra("img", activities.getImage())
-                        .putExtra("content", activities.getContent())
-                        .putExtra("ids", activities.getId()))
-                ;
-            }
-        });
+//        adapter.setOnItemClickListener(new OnItemClickListener()
+//        {
+//            @Override
+//            public void onItemClick(@NonNull int position)
+//            {
+//                final Activities activities = activitiesList.get(position);
+//                startActivity(new Intent(UserHaveActivity.this, UserScanActivity.class).putExtra("title", activities.getTitle())
+//                        .putExtra("img", activities.getImage())
+//                        .putExtra("content", activities.getContent())
+//                        .putExtra("ids", activities.getId()))
+//                ;
+//            }
+//        });
     }
 
     private BaseRecyclerAdapter adapter;
@@ -116,58 +116,6 @@ public class UserHaveActivity extends AppCompatActivity
                 TextView item_new = holder.getView(R.id.item_new);
                 Button item_pass = holder.getView(R.id.item_pass);
                 Button item_setting = holder.getView(R.id.item_setting);
-                item_pass.setText("审核中");
-                item_setting.setVisibility(View.GONE);
-                if (activities.getAccessUserList() != null)
-                {
-                    for (User user : activities.getAccessUserList())
-                    {
-
-                        if (user.getId() == PrefUtils.getInt(UserHaveActivity.this, "userId", 0))
-                        {//说明已经通过
-                            item_pass.setVisibility(View.VISIBLE);
-                            item_setting.setVisibility(View.VISIBLE);
-                            item_pass.setText("签到");
-                            item_pass.setOnClickListener(new View.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(View v)
-                                {
-//                                    Toast.makeText(UserHaveActivity.this, "已签到", Toast.LENGTH_SHORT).show();
-                                    startActivityForResult(new Intent(UserHaveActivity.this, ScanQrActivity.class), 1111);
-                                }
-                            });
-                            item_setting.setText("签退");
-                            item_setting.setOnClickListener(new View.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(View v)
-                                {
-                                    requestSignoff(activities.getId());
-                                }
-                            });
-                            item_setting.setVisibility(View.VISIBLE);
-                            if (PrefUtils.getInt(UserHaveActivity.this, "userId", 0) == activities.getActivityAdminUser().getId())
-                            {
-                                item_pass.setText("管理员二维码");
-                                item_pass.setOnClickListener(new View.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(View v)
-                                    {
-
-                                        startActivity(new Intent(UserHaveActivity.this, ImgActivity.class).putExtra("img", "626128095" + activities.getTitle()));
-                                    }
-                                });
-                                item_setting.setVisibility(View.GONE);
-                            }
-                        } else
-                        {
-                            item_pass.setText("审核中");
-                            item_setting.setVisibility(View.GONE);
-                        }
-                    }
-                }
                 item_title.setText(activities.getTitle());
                 item_new.setText(activities.getContent());
                 if (!activities.getImage().equals(""))
@@ -180,6 +128,70 @@ public class UserHaveActivity extends AppCompatActivity
                 {
                     item_img.setVisibility(View.GONE);
                 }
+                for (User user : activities.getActivityUserList())
+                {
+                    if (PrefUtils.getInt(UserHaveActivity.this, "userId", 0) == user.getId())
+                    {//当此用户存在于活动用户
+                        if (user.getAccess())
+                        {//通过审核
+                            item_pass.setText("签到");
+                            item_setting.setVisibility(View.VISIBLE);
+                            item_setting.setText("签退");
+                            if (user.getActivityAdmin())
+                            {//当该用户为管理员时
+                                item_setting.setText("二维码");
+                                item_pass.setVisibility(View.GONE);
+                            } else
+                            {
+                                if (user.getSign() != null)
+                                    if (user.getSign())
+                                    {//签到
+                                        item_pass.setText("已签到");
+                                    }
+                            }
+                        } else
+                        {
+                            //没通过审核
+                            item_pass.setText("审核中");
+                            item_setting.setVisibility(View.GONE);
+                        }
+
+                    }
+                }
+                item_pass.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        if (item_pass.getText().toString().equals("签到"))
+                            startActivityForResult(new Intent(UserHaveActivity.this, ScanQrActivity.class).putExtra("ids", activities.getId()), 1111);
+                        else if (item_pass.getText().toString().equals("已签到"))
+                        {
+                            Toast.makeText(UserHaveActivity.this, "请勿重复签到", Toast.LENGTH_SHORT).show();
+                        } else
+                        {
+                            Toast.makeText(UserHaveActivity.this, "审核中...", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                item_setting.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        if (item_setting.getText().toString().equals("二维码"))
+                            startActivity(new Intent(UserHaveActivity.this, ImgActivity.class).putExtra("img", "626128095" + activities.getId()));
+                        else
+                        {
+                            if (!item_pass.getText().toString().equals("已签到"))
+                            {
+                                Toast.makeText(UserHaveActivity.this, "请先签到", Toast.LENGTH_SHORT).show();
+                            } else
+                                requestSignoff(activities.getId());
+                        }
+                    }
+                });
+
             }
 
             @Override
@@ -203,7 +215,52 @@ public class UserHaveActivity extends AppCompatActivity
         if (requestCode == 1111 && resultCode == 111)
         {
             String string = data.getStringExtra("signCode");
+            String stringInt = data.getStringExtra("ids");
+            if (string.equals(stringInt))
+            {
+                Toast.makeText(this, "签到成功", Toast.LENGTH_SHORT).show();
+                requestsignOn(Integer.parseInt(string));
+            }
         }
+    }
+
+    private void requestsignOn(int id)
+    {
+        showLoadingDialog();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .build();
+        Activities activities = new Activities();
+        idss = id;
+        activities.setId(id);
+        Gson gson = new Gson();
+        String Json = gson.toJson(activities);
+        Log.e("dddd", Json);
+        RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
+        final Request request = new Request.Builder()
+                .url(Urls.signOnActivity)
+                .post(requestBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Call call, IOException e)
+            {
+                Log.e("error", "connectFail");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException
+            {
+                Message msg = new Message();
+                msg.what = 3;
+                msg.obj = response.body().string();
+                mHandler.sendMessage(msg);
+                dismissLoadingDialog();
+            }
+        });
     }
 
     private void requestSignoff(int id)
@@ -237,7 +294,6 @@ public class UserHaveActivity extends AppCompatActivity
             {
                 Message msg = new Message();
                 msg.what = 2;
-
                 msg.obj = response.body().string();
                 mHandler.sendMessage(msg);
                 dismissLoadingDialog();
@@ -257,6 +313,7 @@ public class UserHaveActivity extends AppCompatActivity
                 case 1:
                     String string = (String) msg.obj;
                     Gson gson = new Gson();
+                    Log.e("测试返回用户活动", string);
                     activitiesList = gson.fromJson(string, new TypeToken<List<Activities>>()
                     {
                     }.getType());
@@ -288,6 +345,17 @@ public class UserHaveActivity extends AppCompatActivity
                                         finish();
                                     }
                                 }).show();
+                    }
+                    break;
+                case 3:
+                    if (!Boolean.parseBoolean(msg.obj.toString()))
+                    {
+                        Toast.makeText(UserHaveActivity.this, "签到失败", Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        Toast.makeText(UserHaveActivity.this, "签到成功", Toast.LENGTH_SHORT).show();
+                        requestData();
+                        finish();
                     }
                     break;
 

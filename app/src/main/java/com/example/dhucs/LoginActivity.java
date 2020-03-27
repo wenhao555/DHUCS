@@ -178,6 +178,7 @@ public class LoginActivity extends AppCompatActivity
                             PrefUtils.setString(context, "imgpath", user1.getImage());
                             PrefUtils.setBoolean(context, "isAdmin", false);
                             PrefUtils.setInt(context, "userId", user1.getId());
+                            PrefUtils.setString(context, "stuNo", user1.getStuNo());
                             startActivity(new Intent(context, MainActivity.class));
                             finish();
                         } else

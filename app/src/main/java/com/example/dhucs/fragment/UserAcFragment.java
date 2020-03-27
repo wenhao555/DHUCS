@@ -36,8 +36,10 @@ import com.example.dhucs.adapter.BaseRecyclerAdapter;
 import com.example.dhucs.listeners.OnItemClickListener;
 import com.example.dhucs.model.Activities;
 import com.example.dhucs.net.Urls;
+import com.example.dhucs.views.GlideImageLoader;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.youth.banner.Banner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,6 +59,7 @@ public class UserAcFragment extends Fragment
 
     private RecyclerView recyvle;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private Banner banner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,7 +69,12 @@ public class UserAcFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_user_ac, container, false);
         requestData();
         recyvle = view.findViewById(R.id.recyvle);
-
+        banner = view.findViewById(R.id.banner);
+        List<Integer> images = new ArrayList<>();
+        images.add(R.mipmap.a);
+        images.add(R.mipmap.b);
+        images.add(R.mipmap.c);
+        banner.setImages(images).setImageLoader(new GlideImageLoader()).start();
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
@@ -116,6 +124,7 @@ public class UserAcFragment extends Fragment
                 TextView item_new = holder.getView(R.id.item_new);
                 TextView item_date = holder.getView(R.id.item_date);
                 item_title.setText(activities.getTitle());
+                item_date.setText(activities.getDate());
                 item_new.setText(activities.getContent());
                 if (!activities.getImage().equals(""))
                 {

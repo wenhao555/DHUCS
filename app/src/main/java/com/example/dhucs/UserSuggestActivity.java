@@ -55,6 +55,11 @@ public class UserSuggestActivity extends AppCompatActivity
                 requestData();
             }
         });
+        if (!getIntent().getStringExtra("title").equals(""))
+        {
+            addAc_content.setText(getIntent().getStringExtra("title"));
+            addAc_content.setEnabled(false);
+        }
     }
 
     private Handler mHandler = new Handler(new Handler.Callback()

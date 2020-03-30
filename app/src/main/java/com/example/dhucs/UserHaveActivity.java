@@ -218,7 +218,6 @@ public class UserHaveActivity extends AppCompatActivity
             String stringInt = data.getStringExtra("ids");
             if (string.equals(stringInt))
             {
-                Toast.makeText(this, "签到成功", Toast.LENGTH_SHORT).show();
                 requestsignOn(Integer.parseInt(string));
             }
         }
@@ -234,9 +233,18 @@ public class UserHaveActivity extends AppCompatActivity
         Activities activities = new Activities();
         idss = id;
         activities.setId(id);
+        User user = new User();
+        user.setId(PrefUtils.getInt(this, "userId", 0));
+        user.setName(PrefUtils.getString(this, "name", ""));
+        user.setSex(PrefUtils.getString(this, "sex", ""));
+        user.setBirth(PrefUtils.getString(this, "birth", ""));
+        user.setAccount(PrefUtils.getString(this, "account", ""));
+        user.setStuNo(PrefUtils.getString(this, "stuNo", ""));
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        activities.setSignUserList(users);
         Gson gson = new Gson();
         String Json = gson.toJson(activities);
-        Log.e("dddd", Json);
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
         final Request request = new Request.Builder()
                 .url(Urls.signOnActivity)
@@ -273,6 +281,17 @@ public class UserHaveActivity extends AppCompatActivity
         Activities user = new Activities();
         user.setId(id);
         idss = id;
+        User user1 = new User();
+        user1.setId(PrefUtils.getInt(this, "userId", 0));
+        user1.setName(PrefUtils.getString(this, "name", ""));
+        user1.setSex(PrefUtils.getString(this, "sex", ""));
+        user1.setBirth(PrefUtils.getString(this, "birth", ""));
+        user1.setAccount(PrefUtils.getString(this, "account", ""));
+        user1.setStuNo(PrefUtils.getString(this, "stuNo", ""));
+        user1.setActivityAdmin(false);
+        user1.setAccess(true);
+        user1.setSign(false);
+        user.setSignOffUser(user1);
         Gson gson = new Gson();
         String Json = gson.toJson(user);
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), Json);
@@ -326,6 +345,7 @@ public class UserHaveActivity extends AppCompatActivity
                     } else
                     {
                         Toast.makeText(UserHaveActivity.this, "签退成功", Toast.LENGTH_SHORT).show();
+                        requestData();
                         AlertDialog.Builder builder = new AlertDialog.Builder(UserHaveActivity.this);
                         builder.setTitle("提示")
                                 .setMessage("是否填写反馈")
@@ -334,7 +354,8 @@ public class UserHaveActivity extends AppCompatActivity
                                     @Override
                                     public void onClick(DialogInterface dialog, int which)
                                     {
-                                        startActivity(new Intent(UserHaveActivity.this, UserSuggestActivity.class).putExtra("ids", idss));
+                                        startActivity(new Intent(UserHaveActivity.this, UserSuggestActivity.class).putExtra("ids", idss)
+                                                .putExtra("title", ""));
                                     }
                                 })
                                 .setNeutralButton("取消", new DialogInterface.OnClickListener()

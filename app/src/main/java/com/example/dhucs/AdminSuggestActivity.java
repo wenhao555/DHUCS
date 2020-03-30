@@ -14,6 +14,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.dhucs.adapter.BaseRecyclerAdapter;
+import com.example.dhucs.listeners.OnItemClickListener;
 import com.example.dhucs.model.Activities;
 import com.example.dhucs.model.User;
 import com.example.dhucs.net.Urls;
@@ -78,6 +80,19 @@ public class AdminSuggestActivity extends AppCompatActivity
         recyvle.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         initData();
         recyvle.setAdapter(adapter);
+        adapter.setOnItemClickListener(new OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(@NonNull int position)
+            {
+                final String activities = activitiesList.get(position);
+                startActivity(new Intent(AdminSuggestActivity.this, UserSuggestActivity.class)
+                        .putExtra("ids", 0)
+                        .putExtra("title", activities))
+
+                ;
+            }
+        });
     }
 
     private BaseRecyclerAdapter adapter;
@@ -96,8 +111,10 @@ public class AdminSuggestActivity extends AppCompatActivity
                 ImageView item_img = holder.getView(R.id.item_img);
                 TextView item_title = holder.getView(R.id.item_title);
                 TextView item_new = holder.getView(R.id.item_new);
+                TextView item_date = holder.getView(R.id.item_date);
                 item_title.setText(activities);
                 item_img.setVisibility(View.GONE);
+                item_date.setVisibility(View.GONE);
                 item_new.setVisibility(View.GONE);
             }
 

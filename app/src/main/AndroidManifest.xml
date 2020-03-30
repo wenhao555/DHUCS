@@ -18,7 +18,6 @@
         <activity android:name=".ScanQrActivity"></activity>
         <activity android:name=".UserSuggestActivity" />
         <activity android:name=".AdminSuggestActivity" />
-        <activity android:name=".UserScanActivity" />
         <activity android:name=".ThisUserActivity" />
         <activity android:name=".UserHaveActivity" />
         <activity android:name=".AddFengActivity" />

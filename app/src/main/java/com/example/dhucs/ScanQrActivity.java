@@ -87,14 +87,6 @@ public class ScanQrActivity extends AppCompatActivity implements QRCodeView.Dele
     @Override
     public void onScanQRCodeSuccess(String result)
     {
-        try
-        {
-            result = new String(result.getBytes("utf-8"), "GBK");
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-        Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
         vibrate();
         Intent intent = new Intent();
         intent.putExtra("signCode", result);

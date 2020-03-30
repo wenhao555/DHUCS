@@ -10,8 +10,8 @@ public class Activities implements Serializable
     // 报名的user
     private List<User> activityUserList;
     private String image;
-    private String title;
     private String date;
+    private String title;
     // 活动内容
     private String content;
     // 活动管理员
@@ -19,43 +19,6 @@ public class Activities implements Serializable
     //建议内容
     private List<String> suggestList;
 
-    public List<User> getSignUserList()
-    {
-        return signUserList;
-    }
-
-    public void setSignUserList(List<User> signUserList)
-    {
-        this.signUserList = signUserList;
-    }
-
-    private List<User> signUserList;
-    public String getDate()
-    {
-        return date;
-    }
-
-    public void setDate(String date)
-    {
-        this.date = date;
-    }
-
-    // 签退的user
-    private User signOffUser;
-    // 审核通过的user
-    private List<User> accessUserList;
-
-    public List<User> getAccessUserList()
-    {
-        return accessUserList;
-    }
-
-    public void setAccessUserList(List<User> accessUserList)
-    {
-        this.accessUserList = accessUserList;
-    }
-
-    // 审核通过的user
     public int getId()
     {
         return id;
@@ -84,6 +47,16 @@ public class Activities implements Serializable
     public void setImage(String image)
     {
         this.image = image;
+    }
+
+    public String getDate()
+    {
+        return date;
+    }
+
+    public void setDate(String date)
+    {
+        this.date = date;
     }
 
     public String getTitle()
@@ -135,4 +108,31 @@ public class Activities implements Serializable
     {
         this.signOffUser = signOffUser;
     }
+
+    public List<User> getSignUserList()
+    {
+        return signUserList;
+    }
+
+    public void setSignUserList(List<User> signUserList)
+    {
+        this.signUserList = signUserList;
+    }
+
+    public List<User> getAccessUserList()
+    {
+        return accessUserList;
+    }
+
+    public void setAccessUserList(List<User> accessUserList)
+    {
+        this.accessUserList = accessUserList;
+    }
+
+    // 签退的user
+    private User signOffUser;
+    // 签到的user
+    private List<User> signUserList;
+    // 审核通过的user
+    private List<User> accessUserList;
 }

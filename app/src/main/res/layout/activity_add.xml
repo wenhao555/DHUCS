@@ -31,6 +31,13 @@
             android:textSize="30sp" />
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="标题"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
+
     <EditText
         android:id="@+id/addAc_title"
         android:layout_width="match_parent"
@@ -39,6 +46,13 @@
         android:hint="请输入活动标题"
         android:padding="10dp"
         android:textSize="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="内容"
+        android:textColor="@color/black"
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,6 +67,7 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:hint="请输入活动内容"
+            android:padding="10dp"
             android:textSize="18dp" />
     </LinearLayout>
 

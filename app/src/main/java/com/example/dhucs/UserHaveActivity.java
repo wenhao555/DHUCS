@@ -137,18 +137,19 @@ public class UserHaveActivity extends AppCompatActivity
                             item_pass.setText("签到");
                             item_setting.setVisibility(View.VISIBLE);
                             item_setting.setText("签退");
-                            if (user.getActivityAdmin())
-                            {//当该用户为管理员时
-                                item_setting.setText("二维码");
-                                item_pass.setVisibility(View.GONE);
-                            } else
-                            {
-                                if (user.getSign() != null)
-                                    if (user.getSign())
-                                    {//签到
-                                        item_pass.setText("已签到");
-                                    }
-                            }
+                            if (user.getActivityAdmin() != null)
+                                if (user.getActivityAdmin())
+                                {//当该用户为管理员时
+                                    item_setting.setText("二维码");
+                                    item_pass.setVisibility(View.GONE);
+                                } else
+                                {
+                                    if (user.getSign() != null)
+                                        if (user.getSign())
+                                        {//签到
+                                            item_pass.setText("已签到");
+                                        }
+                                }
                         } else
                         {
                             //没通过审核
